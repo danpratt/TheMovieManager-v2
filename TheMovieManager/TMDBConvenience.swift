@@ -188,16 +188,25 @@ extension TMDBClient {
     func getWatchlistMovies(_ completionHandlerForWatchlist: @escaping (_ result: [TMDBMovie]?, _ error: NSError?) -> Void) {
         
         /* 1. Specify parameters, the API method, and the HTTP body (if POST) */
-        /* 2. Make the request */
+        let parameters = [ParameterKeys.SessionID:TMDBClient.sharedInstance().sessionID! as AnyObject]
+        var method: String = Methods.AccountIDWatchlistMovies
+        method = substituteKeyInMethod(method, key: URLKeys.UserID, value: String(TMDBClient.sharedInstance().userID!))!
+        
         /* 3. Send the desired value(s) to completion handler */
         
-        /*
-        
-        taskForGETMethod(method, parameters: parameters) { (results, error) in
-        
+        let _ = taskForGETMethod(method, parameters: parameters) { (results, error) in
+            if let error = error {
+                completionHandlerForWatchlist(nil, error)
+            } else {
+                if let results = results?[TMDBClient.JSONResponseKeys.MovieResults] as? [[String:AnyObject]] {
+                    let movies = TMDBMovie.moviesFromResults(results)
+                    completionHandlerForWatchlist(movies, nil)
+                } else {
+                    completionHandlerForWatchlist(nil, NSError(domain: "getWatchlistMovies parsing", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not parse getWatchlistMovies"]))
+                }
+            }
         }
-        
-        */
+ 
     }
     
     func getMoviesForSearchString(_ searchString: String, completionHandlerForMovies: @escaping (_ result: [TMDBMovie]?, _ error: NSError?) -> Void) -> URLSessionDataTask? {
@@ -275,6 +284,9 @@ extension TMDBClient {
     func postToWatchlist(_ movie: TMDBMovie, watchlist: Bool, completionHandlerForWatchlist: @escaping (_ result: Int?, _ error: NSError?) -> Void) {
         
         /* 1. Specify parameters, the API method, and the HTTP body (if POST) */
+//        let parameters = [ParameterKeys.SessionID: TMDBClient.sharedInstance().sessionID! as AnyObject]
+//        var method: String = Methods.AccountIDWatchlist
+//        method = substituteKeyInMethod(mutableMethod, key: URLKeys.UserID, value: String(TMDBClient.sharedInstance().userID!))!
         /* 2. Make the request */
         /* 3. Send the desired value(s) to completion handler */
         
