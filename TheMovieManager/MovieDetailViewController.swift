@@ -17,6 +17,7 @@ class MovieDetailViewController: UIViewController {
     var movie: TMDBMovie?
     var isFavorite = false
     var isWatchlist = false
+    var rating = ""
     
     // MARK: Outlets
     
@@ -24,7 +25,7 @@ class MovieDetailViewController: UIViewController {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var toggleFavoriteButton: UIBarButtonItem!
     @IBOutlet weak var toggleWatchlistButton: UIBarButtonItem!
-    
+    @IBOutlet weak var movieRatingLabel: UILabel!
     // MARK: Life Cycle
     
     override func viewDidLoad() {
@@ -40,12 +41,17 @@ class MovieDetailViewController: UIViewController {
         
         // set the UI, then check if the movie is a favorite/watchlist and update the buttons!
         if let movie = movie {
-            
             // set the title
             if let releaseYear = movie.releaseYear {
                 navigationItem.title = "\(movie.title) (\(releaseYear))"
             } else {
                 navigationItem.title = "\(movie.title)"
+            }
+            
+            if let averageRating = movie.averageRating {
+                movieRatingLabel.text = "\(averageRating)/10"
+            } else {
+                movieRatingLabel.text = "No ratings"
             }
             
             // setting some default UI ...
